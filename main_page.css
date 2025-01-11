@@ -1,0 +1,63 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+.header-container {
+    display: flex;    
+    align-items: center;
+    padding: 10px;
+    gap: 10px;
+    height: 50px;
+}
+
+.logo {
+    height: 100%;
+    align-items: center;
+    margin-right: 30px;
+}
+
+.logo i {
+    height: 100%; 
+    display: flex;
+    align-items: center;
+    font-size: 30px;
+}
+
+.search-line {
+    display: flex;
+    flex-grow: 1;
+    height: 100%;
+    margin-right: 30px;
+    gap: 5px;
+}
+
+.search-line input {
+    flex-grow: 1; 
+    padding: 0;
+    font-size: 16px;
+}
+
+.search-line button {
+    padding: 0 10px;
+    height: 100%; 
+    border: none;
+    background-color: #007bff;
+    color: white;
+    border-radius: 5px;
+    min-width: 100px;
+}
+
+.basket-profile {
+    display: flex;
+    margin-left: auto;
+    gap: 7px;
+    height: 100%;
+}
+
+.basket-profile i {
+    font-size: 30px;
+    display: flex;
+    align-items: center;
+}
