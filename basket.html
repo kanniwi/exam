@@ -32,13 +32,63 @@
             <div class="container-cards">
             </div>
             <p class="basket-paragraph">Оформление заказа</p>
-            <div class="personal-form">              
-                  
+            <div class="make-order">              
+                <form class="order-grid">  
+                    <div class="information">
+                        <div class="single-info">
+                            <label for="name">Имя</label>
+                            <input type="text" id="name" name="full_name" required>
+                        </div>
+
+                        
+                        <div class="single-info">
+                            <label for="email">Email</label>
+                            <input type="email" id="email" name="email" required>
+                        </div>
+            
+                        <div class="single-info">
+                            <label for="phone">Номер телефона</label>
+                            <input type="text" id="phone" name="phone" required>
+                        </div>
+
+                        <div class="choose-group">
+                            <input type="checkbox" id="subscribe" name="subscribe" checked>
+                            <label for="subscribe">Подписаться на рассылку</label>
+                        </div>
+
+                        <div class="single-info">
+                            <label for="comment">Комментарии к заказу</label>
+                            <textarea id="comment" name="comment" rows="4"></textarea>
+                        </div>
+                    </div>       
+
+                    <div class="delivery">                           
+                        <div class="single-info">
+                            <label for="address">Адрес доставки</label>
+                            <input type="text" id="address" name="delivery_address" required>
+                        </div>
+
+                        <div class="single-info">
+                            <label for="data">Дата доставки</label>
+                            <input type="date" id="data" name="data_delivery" required>
+                        </div>
+
+                        <div class="single-info">
+                            <label class="time-delivery">Выберите время доставки</label>
+                            <select id="delivery-time">
+                            </select>
+                        </div>
+
+                        <p class="total-cost-note"></p>                                                 
+            
+                        <div class="submit-reset">
+                            <button type="reset">Сбросить</button>
+                            <button type="submit">Оформить</button>
+                        </div>
+                    </div>
+                </form>
             </div>
         </div>
-
-
-
     </main>
     <footer id="contacts">
         <p>&#169; 2025 Название компании</p>

@@ -11,3 +11,36 @@
     padding: 15px;
     flex-direction: column;
 }
+
+.order-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 50px; 
+    margin: 10px 30px;
+}
+
+.information, .delivery {
+    display: flex;
+    flex-direction: column;
+}
+
+.single-info {
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.choose-group {
+    margin-bottom: 20px;
+}
+
+.submit-reset {
+    display: flex;
+    justify-content: space-around;
+}
+
+.submit-reset button {
+    height: 30px;
+    width: 40%;
+    border-radius: 8px;
+}
