@@ -91,6 +91,99 @@ main {
     flex: 3 1 300px;    
 }
 
+.container-cards {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    padding-bottom: 60px; /* Создаёт место для кнопки */
+    justify-content: space-around;
+}
+
+.up-description {
+    display: flex;
+    margin-bottom: 15px;
+    width: 100%;
+    margin-right: 25px;
+}
+
+
+.good {
+    width: 300px; /* Фиксированная ширина карточки */
+    border: 1px solid #ddd; /* Граница карточки */
+    border-radius: 8px; /* Скругленные углы */
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Тень для карточки */
+    overflow: hidden; /* Обрезаем содержимое за границами */
+    padding: 15px; /* Внутренние отступы */
+    text-align: center; /* Центрируем содержимое */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.good img {
+    max-width: 100%; /* Изображение растягивается по ширине карточки */
+    height: auto; /* Сохраняем пропорции */
+    margin-bottom: 15px; /* Отступ снизу */
+    border-radius: 8px;
+}
+
+.good .name {
+    font-size: 14px; 
+    font-weight: 500;
+    margin-bottom: 10px; 
+}
+
+.good .rating {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 5px; /* Расстояние между рейтингом и звездами */
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+.good .price {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px; /* Расстояние между элементами цены */
+    margin-bottom: 15px;
+}
+
+.good .price .current-price {
+    font-size: 16px; /* Размер текущей цены */
+    font-weight: bold;
+    color: #000; /* Чёрный цвет */
+}
+
+.good .price .old-price {
+    font-size: 16px; /* Размер старой цены */
+    text-decoration: line-through; /* Перечёркивание */
+    color: #999; /* Серый цвет */
+}
+
+.good .price .discount {
+    font-size: 16px; /* Размер текста скидки */
+    color: #f00; /* Красный цвет */
+    font-weight: bold;
+}
+
+.good .add-button {
+    background-color: #ccc; /* Серый фон кнопки */
+    border: none; /* Убираем рамку */
+    border-radius: 8px; /* Скругляем углы */
+    padding: 7px 15px; /* Внутренние отступы */
+    font-size: 14px; /* Размер текста кнопки */
+    cursor: pointer;
+    width: 100%;
+    margin-top: auto;
+}
+
+.good .delete-button:hover {
+    background-color: #999; /* Более тёмный серый цвет при наведении */
+    color: white; /* Белый текст */
+}
+
 .sidebar ul {
     display: flex;
     flex-direction: column;
@@ -176,9 +269,10 @@ main {
     flex-direction: column;
     position: relative;
     height: 100%;
+    margin-bottom: 30px;
 }
 
-.container-catalog button {
+.load-more {
     position: absolute;
     bottom: 20px;
     left: 50%;
@@ -193,5 +287,7 @@ main {
 }
 
 footer {
+    margin-top: 30px;
+    padding-bottom: 12px;
     text-align: center;
 }
