@@ -1,7 +1,21 @@
 * {
+    font-family: 'Montserrat';
     box-sizing: border-box;
     margin: 0;
     padding: 0;
+}
+
+html, body {
+    height: 100%;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+}
+
+main {
+    flex-grow: 1;
 }
 
 .header-container {
@@ -46,7 +60,7 @@
     background-color: #007bff;
     color: white;
     border-radius: 5px;
-    min-width: 100px;
+    min-width: 10px;
 }
 
 .basket-profile {
@@ -60,4 +74,124 @@
     font-size: 30px;
     display: flex;
     align-items: center;
+}
+
+.container-main {
+    display: flex; 
+    flex-wrap: wrap; 
+    gap: 5px; 
+    padding: 15px;
+}
+
+.sidebar {
+    flex: 1 1 150px; 
+}
+
+.main-content {
+    flex: 3 1 300px;    
+}
+
+.sidebar ul {
+    display: flex;
+    flex-direction: column;
+    list-style-type: none;
+    gap: 7px;
+    margin-bottom: 30px;
+}
+
+.sidebar p {
+    font-weight: 700;
+    font-size: 18px;
+    padding-bottom: 10px;
+}
+
+.sidebar label {
+    display: flex;
+    gap: 5px;
+}
+
+.container-cost {
+    display: flex;
+}
+
+.container-cost p {
+    font-size: 14px;
+    font-weight: 300;
+}
+
+.box-cost {
+    padding-right: 5px;
+}
+
+.box-cost input {
+    width: 100%;
+    height: 25px;
+    display: flex;
+    border-radius: 8px;
+    font-size: 10px;
+    text-align: center;
+    border-style: solid;
+    
+}
+
+.sidebar-checkbox {
+    padding-top: 20px;
+}
+
+.button-apply {
+    padding-top: 20px;
+}
+
+.button-apply button {
+    width: 100px;
+    height: 32px;
+    border-radius: 8px;   
+}
+
+.button-apply button:hover {
+    cursor: pointer;
+}
+
+.catalog {
+    display: flex;
+}
+
+.catalog p{
+    font-size: 22px;
+    font-weight: 700;
+}
+
+.dropdown {
+    display: flex;
+    margin-left: auto;
+}
+
+.container-cards {
+    display: flex;
+    flex-grow: 1; 
+}
+
+.container-catalog {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    height: 100%;
+}
+
+.container-catalog button {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 8px;
+    text-align: center;
+    height: 30px;
+    line-height: 10px;
+}
+
+footer {
+    text-align: center;
 }
