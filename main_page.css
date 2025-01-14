@@ -88,14 +88,14 @@ main {
 }
 
 .main-content {
-    flex: 3 1 300px;    
+    flex: 6 1 300px;    
 }
 
 .container-cards {
     display: flex;
     flex-wrap: wrap;
     gap: 20px;
-    padding-bottom: 60px; /* Создаёт место для кнопки */
+    padding-bottom: 60px; 
     justify-content: space-around;
 }
 
@@ -108,22 +108,22 @@ main {
 
 
 .good {
-    width: 300px; /* Фиксированная ширина карточки */
-    border: 1px solid #ddd; /* Граница карточки */
-    border-radius: 8px; /* Скругленные углы */
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Тень для карточки */
-    overflow: hidden; /* Обрезаем содержимое за границами */
-    padding: 15px; /* Внутренние отступы */
-    text-align: center; /* Центрируем содержимое */
+    width: 330px; 
+    border: 1px solid #ddd; 
+    border-radius: 8px; 
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); 
+    overflow: hidden; 
+    padding: 15px; 
+    text-align: center; 
     display: flex;
     flex-direction: column;
     align-items: center;
 }
 
 .good img {
-    max-width: 100%; /* Изображение растягивается по ширине карточки */
-    height: auto; /* Сохраняем пропорции */
-    margin-bottom: 15px; /* Отступ снизу */
+    max-width: 100%; 
+    height: auto; 
+    margin-bottom: 15px; 
     border-radius: 8px;
 }
 
@@ -137,7 +137,7 @@ main {
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 5px; /* Расстояние между рейтингом и звездами */
+    gap: 5px;
     font-size: 14px;
     margin-bottom: 10px;
 }
@@ -146,42 +146,42 @@ main {
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 10px; /* Расстояние между элементами цены */
+    gap: 10px; 
     margin-bottom: 15px;
 }
 
 .good .price .current-price {
-    font-size: 16px; /* Размер текущей цены */
+    font-size: 16px; 
     font-weight: bold;
-    color: #000; /* Чёрный цвет */
+    color: #000; 
 }
 
 .good .price .old-price {
-    font-size: 16px; /* Размер старой цены */
-    text-decoration: line-through; /* Перечёркивание */
-    color: #999; /* Серый цвет */
+    font-size: 16px; 
+    text-decoration: line-through; 
+    color: #999; 
 }
 
 .good .price .discount {
-    font-size: 16px; /* Размер текста скидки */
-    color: #f00; /* Красный цвет */
+    font-size: 16px; 
+    color: #f00; 
     font-weight: bold;
 }
 
 .good .add-button {
-    background-color: #ccc; /* Серый фон кнопки */
-    border: none; /* Убираем рамку */
-    border-radius: 8px; /* Скругляем углы */
-    padding: 7px 15px; /* Внутренние отступы */
-    font-size: 14px; /* Размер текста кнопки */
+    background-color: #efefef; 
+    border: none; 
+    border-radius: 8px; 
+    padding: 7px 15px; 
+    font-size: 14px;
     cursor: pointer;
     width: 100%;
     margin-top: auto;
 }
 
 .good .delete-button:hover {
-    background-color: #999; /* Более тёмный серый цвет при наведении */
-    color: white; /* Белый текст */
+    background-color: #999; 
+    color: white; 
 }
 
 .sidebar ul {

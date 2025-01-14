@@ -21,7 +21,7 @@ async function loadGoods(currentPage, perPage) {
         goods = data.goods; 
         const pagination = data._pagination; 
 
-        displayGoods(goods); // Отображаем товары
+        displayGoods(goods); 
     } catch (error) {
         console.error('Ошибка загрузки товаров:', error);
         alert('Не удалось загрузить данные о товарах. Попробуйте позже.');
@@ -30,24 +30,22 @@ async function loadGoods(currentPage, perPage) {
 
 function displayGoods(goods) {
     const container = document.querySelector('.container-cards');
-    container.innerHTML = ''; // Очищаем контейнер перед добавлением карточек
+    container.innerHTML = '';
 
     goods.forEach(item => {
         const goodElement = document.createElement('div');
         goodElement.classList.add('good');
 
-        // Формируем звезды на основе рейтинга
-        const roundedRating = Math.round(item.rating); // Округляем рейтинг до ближайшего целого
+        const roundedRating = Math.round(item.rating);
         let starsHtml = '';
         for (let i = 1; i <= 5; i++) {
             if (i <= roundedRating) {
-                starsHtml += `<span class="star filled">⭐</span>`; // Закрашенная звезда
+                starsHtml += `<span class="star filled">⭐</span>`; 
             } else {
-                starsHtml += `<span class="star">☆</span>`; // Пустая звезда
+                starsHtml += `<span class="star">☆</span>`; 
             }
         }
 
-        // Проверяем наличие скидки
         let priceHtml = '';
         if (item.discount_price) {
             const discountPercent = Math.round((1 - item.discount_price / item.actual_price) * 100);
