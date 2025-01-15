@@ -2,6 +2,39 @@ const API_URL = "https://edu.std-900.ist.mospolytech.ru/exam-2024-1/api/orders";
 const GOODS_API_URL = "https://edu.std-900.ist.mospolytech.ru/exam-2024-1/api/goods";
 const API_KEY = "7630fae5-737b-4cae-b85d-b7d7c246a48b";
 
+// Функция для расчета стоимости доставки
+function calculateDeliveryCost(deliveryDate, deliveryInterval) {
+    const baseDeliveryCost = 200;
+    const weekendDeliveryCost = 300;
+    const eveningDeliveryCost = 200;
+
+    // Получаем день недели (0 - воскресенье, 1 - понедельник, и т.д.)
+    const deliveryDay = new Date(deliveryDate).getDay();
+    // console.log("Day of the week:", deliveryDay);
+
+    // Проверяем, является ли день выходным (воскресенье или суббота)
+    const isWeekend = deliveryDay === 0 || deliveryDay === 6;
+
+    // Проверяем, если доставка в вечерние часы (с 18:00 до 22:00)
+    const isEvening = (deliveryInterval == "18:00-22:00");
+    // console.log(isEvening);
+
+    // Базовая стоимость доставки
+    let deliveryCost = baseDeliveryCost;
+
+    // Если выходные, добавляем дополнительную стоимость
+    if (isWeekend) {
+        deliveryCost += weekendDeliveryCost;
+    }
+
+    // Если вечерняя доставка, добавляем дополнительную стоимость
+    if (isEvening) {
+        deliveryCost += eveningDeliveryCost;
+    }
+
+    return deliveryCost;
+}
+
 // Функция для загрузки заказов с API
 async function loadOrders() {
     try {
@@ -32,6 +65,11 @@ async function fetchGoodById(goodId) {
         console.error('Ошибка загрузки товара:', error);
         return null;
     }
+}
+
+// Функция для обрезки названия товара до 30 символов
+function truncateName(name) {
+    return name.length > 30 ? name.slice(0, 30) + '...' : name;
 }
 
 // Функция для отображения заказов
@@ -87,19 +125,28 @@ async function displayOrders(orders) {
         const goodsInfo = await Promise.all(order.good_ids.map(fetchGoodById));
         const goodsNames = goodsInfo
             .filter(good => good !== null) // Исключаем товары, которые не удалось загрузить
-            .map(good => good.name)
+            .map(good => truncateName(good.name)) // Применяем обрезку для каждого названия
             .join(', ');
 
-        const totalPrice = goodsInfo.reduce((sum, good) => {
-            if (!good) return sum;
-            const price = good.discount_price || good.price;
+        const goodsTotalPrice = goodsInfo.reduce((sum, good) => {
+            if (!good || (!good.price && !good.discount_price)) return sum; // Убедитесь, что у товара есть цена
+            const price = good.discount_price || good.price; // Используйте скидочную цену, если она есть
             return sum + price;
         }, 0);
+            
+
+        console.log(goodsTotalPrice);
+
+        // Рассчитываем стоимость доставки
+        const deliveryCost = calculateDeliveryCost(order.delivery_date, order.delivery_interval);
+
+        // Общая стоимость с учетом доставки
+        const totalPriceWithDelivery = goodsTotalPrice + deliveryCost;
 
         const orderRow = document.getElementById(`order-${order.id}`);
         if (orderRow) {
             orderRow.querySelector('.order-goods').textContent = goodsNames || 'Нет данных о товарах';
-            orderRow.querySelector('.order-total-price').textContent = `${totalPrice} ₽`;
+            orderRow.querySelector('.order-total-price').textContent = `${totalPriceWithDelivery} ₽ (включая доставку: ${deliveryCost} ₽)`;
         }
     });
 
@@ -159,7 +206,6 @@ async function deleteOrder(orderId) {
         alert('Произошла ошибка при удалении заказа. Попробуйте позже.');
     }
 }
-
 
 // Обработчики кнопок в хедере
 document.addEventListener('DOMContentLoaded', async () => {

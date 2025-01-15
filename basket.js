@@ -201,7 +201,7 @@ function calculateDeliveryCost() {
 
     // Учитываем вечерние часы
     if (deliveryTime === '18:00-22:00') {
-        additionalCost += 100;
+        additionalCost += 200;
     }
 
     // Учитываем выходные дни
