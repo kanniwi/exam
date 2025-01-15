@@ -3,8 +3,9 @@ const API_KEY = "7630fae5-737b-4cae-b85d-b7d7c246a48b";
 let goods = [];
 let currentPage = JSON.parse(localStorage.getItem('currentPage')) || 1;
 const perPage = 10;
-let totalPages = 1; // Общее количество страниц
-let currentSort = "rating_desc"; // Сортировка по умолчанию
+let totalPages = 1;
+let currentSort = "rating_desc";
+let data = [];
 
 function addListenersToButtons() {
     const buttons = document.querySelectorAll('.add-button');
@@ -98,13 +99,16 @@ async function loadGoods(page, perPage, sortOrder = "rating_desc", append = fals
 
         if (!response.ok) throw new Error(`Ошибка загрузки данных: ${response.statusText}`);
 
-        const data = await response.json();
+        data = await response.json();
+        if (!data.goods || !data._pagination) {
+            throw new Error('Некорректный ответ от сервера. Данные отсутствуют.');
+        }
+
         goods = append ? goods.concat(data.goods) : data.goods;
         totalPages = Math.ceil(data._pagination.total_count / perPage);
 
         displayGoods(data.goods, append);
 
-        // Управление кнопкой "Загрузить ещё"
         const loadMoreButton = document.querySelector('.load-more');
         if (page >= totalPages) {
             loadMoreButton.style.display = 'none';
@@ -118,6 +122,9 @@ async function loadGoods(page, perPage, sortOrder = "rating_desc", append = fals
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
+    localStorage.setItem('currentPage', JSON.stringify(1));
+    currentPage = 1;
+
     await loadGoods(currentPage, perPage, currentSort);
 
     const basketButton = document.querySelector('.bi-basket');
@@ -138,12 +145,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (loadMoreButton) {
         loadMoreButton.addEventListener('click', async () => {
             currentPage += 1;
-            localStorage.setItem('currentPage', currentPage);
+            localStorage.setItem('currentPage', JSON.stringify(currentPage));
             await loadGoods(currentPage, perPage, currentSort, true);
         });
     }
 
-    const sortDropdown = document.querySelector('.sort-dropdown');
+    const sortDropdown = document.querySelector('#sort-dropdown');
     if (sortDropdown) {
         sortDropdown.addEventListener('change', async (event) => {
             currentSort = event.target.value;
