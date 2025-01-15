@@ -124,7 +124,7 @@ document.querySelector('.order-grid').addEventListener('submit', async function 
         subscribe: formData.get('subscribe') === 'on' ? 1 : 0,
         delivery_address: formData.get('delivery_address'),
         delivery_date: formatDateToDDMMYYYY(formData.get('delivery_date')),
-        delivery_interval: document.querySelector('#delivery-time').value,
+        delivery_interval: document.querySelector('#delivery_interval').value,
         comment: formData.get('comment') || '',
         good_ids: [],
     };
@@ -193,15 +193,15 @@ function calculateTotalCost() {
 
 function calculateDeliveryCost() {
     const baseDeliveryCost = 200;
-    const deliveryTime = document.querySelector('#delivery-time').value;
+    const deliveryTime = document.querySelector('#delivery_interval').value;
     const deliveryDate = new Date(document.querySelector('#delivery_date').value);
     const dayOfWeek = deliveryDate.getDay(); // 0 - воскресенье, 6 - суббота
 
     let additionalCost = 0;
 
     // Учитываем вечерние часы
-    if (deliveryTime === '18:00-21:00') {
-        additionalCost += 200;
+    if (deliveryTime === '18:00-22:00') {
+        additionalCost += 100;
     }
 
     // Учитываем выходные дни
@@ -221,7 +221,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     loadCart();
 
     document.querySelector('#delivery_date').addEventListener('change', calculateTotalCost);
-    document.querySelector('#delivery-time').addEventListener('change', calculateTotalCost);
+    document.querySelector('#delivery_interval').addEventListener('change', calculateTotalCost);
 
     // Переходы по кнопкам
     const basketButton = document.querySelector('.bi-list-ul');
