@@ -1,28 +1,30 @@
-const API_URL = "https://edu.std-900.ist.mospolytech.ru/exam-2024-1/api/goods"; 
+const API_URL = "https://edu.std-900.ist.mospolytech.ru/exam-2024-1/api/goods";
 const API_KEY = "7630fae5-737b-4cae-b85d-b7d7c246a48b";
-let goods = []; 
-let currentPage = 1; 
-const perPage = 8;
-
+let goods = [];
+let currentPage = JSON.parse(localStorage.getItem('currentPage')) || 1;
+const perPage = 10;
+let totalPages = 1; // Общее количество страниц
+let currentSort = "rating_desc"; // Сортировка по умолчанию
 
 function addListenersToButtons() {
     const buttons = document.querySelectorAll('.add-button');
-
     buttons.forEach(button => {
         button.addEventListener('click', () => {
             const id = button.getAttribute('data-id');
-            let storedIds = JSON.parse(localStorage.getItem('cartIds')) || [];
+            const selectedGood = goods.find(item => item.id === parseInt(id));
 
-            if (storedIds.includes(id)) {
-                storedIds = storedIds.filter(storedId => storedId !== id);
-                localStorage.setItem('cartIds', JSON.stringify(storedIds));
-                updateCardAppearance(id, false); 
+            let storedGoods = JSON.parse(localStorage.getItem('cartGoods')) || [];
+            const goodIndex = storedGoods.findIndex(item => item.id === selectedGood.id);
+
+            if (goodIndex !== -1) {
+                storedGoods.splice(goodIndex, 1);
+                updateCardAppearance(id, false);
             } else {
-
-                storedIds.push(id);
-                localStorage.setItem('cartIds', JSON.stringify(storedIds));
-                updateCardAppearance(id, true); 
+                storedGoods.push(selectedGood);
+                updateCardAppearance(id, true);
             }
+
+            localStorage.setItem('cartGoods', JSON.stringify(storedGoods));
         });
     });
 }
@@ -32,53 +34,38 @@ function updateCardAppearance(id, isInCart) {
     if (card) {
         const button = card.querySelector('.add-button');
         if (isInCart) {
-            card.style.borderColor = 'red'; 
-            button.textContent = 'Удалить'; 
+            card.style.borderColor = 'red';
+            button.textContent = 'Удалить';
         } else {
-            card.style.borderColor = '#ddd'; 
-            button.textContent = 'Добавить'; 
+            card.style.borderColor = '#ddd';
+            button.textContent = 'Добавить';
         }
     }
 }
 
-function displayGoods(goods) {
+function displayGoods(newGoods, append = false) {
     const container = document.querySelector('.container-cards');
-    container.innerHTML = '';
+    if (!append) {
+        container.innerHTML = '';
+    }
 
-    const storedIds = JSON.parse(localStorage.getItem('cartIds')) || []; 
+    const storedGoods = JSON.parse(localStorage.getItem('cartGoods')) || [];
+    const storedIds = storedGoods.map(item => item.id);
 
-    goods.forEach(item => {
+    newGoods.forEach(item => {
         const goodElement = document.createElement('div');
         goodElement.classList.add('good');
-        goodElement.setAttribute('data-id', item.id); 
+        goodElement.setAttribute('data-id', item.id);
 
         const roundedRating = Math.round(item.rating);
         let starsHtml = '';
         for (let i = 1; i <= 5; i++) {
-            if (i <= roundedRating) {
-                starsHtml += `<span class="star filled">⭐</span>`;
-            } else {
-                starsHtml += `<span class="star">☆</span>`;
-            }
+            starsHtml += i <= roundedRating ? `<span class="star filled">⭐</span>` : `<span class="star">☆</span>`;
         }
 
-        let priceHtml = '';
-        if (item.discount_price) {
-            const discountPercent = Math.round((1 - item.discount_price / item.actual_price) * 100);
-            priceHtml = `
-                <span class="current-price">${item.discount_price} ₽</span>
-                <span class="old-price">${item.actual_price} ₽</span>
-                <span class="discount">-${discountPercent}%</span>
-            `;
-        } else {
-            priceHtml = `
-                <span class="current-price">${item.actual_price} ₽</span>
-            `;
-        }
-
-        const isInCart = storedIds.includes(String(item.id)); 
-        const borderColor = isInCart ? 'red' : '#ddd'; 
-        const buttonText = isInCart ? 'Удалить' : 'Добавить'; 
+        const isInCart = storedIds.includes(item.id);
+        const borderColor = isInCart ? 'red' : '#ddd';
+        const buttonText = isInCart ? 'Удалить' : 'Добавить';
 
         goodElement.style.borderColor = borderColor;
         goodElement.innerHTML = `
@@ -86,12 +73,14 @@ function displayGoods(goods) {
             <p class="name">${item.name}</p>
             <div class="rating">
                 <span>${item.rating.toFixed(1)}</span>
-                <div class="stars">
-                    ${starsHtml}
-                </div>
+                <div class="stars">${starsHtml}</div>
             </div>
             <div class="price">
-                ${priceHtml}
+                ${item.discount_price 
+                    ? `<span class="current-price">${item.discount_price} ₽</span>
+                       <span class="old-price">${item.actual_price} ₽</span>`
+                    : `<span class="current-price">${item.actual_price} ₽</span>`
+                }
             </div>
             <button class="add-button" data-id="${item.id}">${buttonText}</button>
         `;
@@ -99,33 +88,37 @@ function displayGoods(goods) {
         container.appendChild(goodElement);
     });
 
-    addListenersToButtons(); 
+    addListenersToButtons();
 }
 
-async function loadGoods(currentPage, perPage) {
+async function loadGoods(page, perPage, sortOrder = "rating_desc", append = false) {
     try {
-        const urlWithParams = `${API_URL}?api_key=${API_KEY}&page=${currentPage}&per_page=${perPage}`;
-        const response = await fetch(urlWithParams);
+        const url = `${API_URL}?api_key=${API_KEY}&page=${page}&per_page=${perPage}&sort_order=${sortOrder}`;
+        const response = await fetch(url);
 
-        if (!response.ok) {
-            const errorData = await response.json();
-            if (errorData.error) {
-                alert(errorData.error);
-            }
-            throw new Error('Ошибка загрузки данных: ' + response.statusText);
-        }
+        if (!response.ok) throw new Error(`Ошибка загрузки данных: ${response.statusText}`);
 
         const data = await response.json();
-        goods = data.goods;
-        displayGoods(goods);
+        goods = append ? goods.concat(data.goods) : data.goods;
+        totalPages = Math.ceil(data._pagination.total_count / perPage);
+
+        displayGoods(data.goods, append);
+
+        // Управление кнопкой "Загрузить ещё"
+        const loadMoreButton = document.querySelector('.load-more');
+        if (page >= totalPages) {
+            loadMoreButton.style.display = 'none';
+        } else {
+            loadMoreButton.style.display = 'block';
+        }
     } catch (error) {
         console.error('Ошибка загрузки товаров:', error);
-        alert('Не удалось загрузить данные о товарах. Попробуйте позже.');
+        alert('Не удалось загрузить данные. Попробуйте позже.');
     }
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
-    await loadGoods(currentPage, perPage);
+    await loadGoods(currentPage, perPage, currentSort);
 
     const basketButton = document.querySelector('.bi-basket');
     if (basketButton) {
@@ -138,6 +131,25 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (profileButton) {
         profileButton.addEventListener('click', function () {
             window.location.href = 'profile.html';
+        });
+    }
+
+    const loadMoreButton = document.querySelector('.load-more');
+    if (loadMoreButton) {
+        loadMoreButton.addEventListener('click', async () => {
+            currentPage += 1;
+            localStorage.setItem('currentPage', currentPage);
+            await loadGoods(currentPage, perPage, currentSort, true);
+        });
+    }
+
+    const sortDropdown = document.querySelector('.sort-dropdown');
+    if (sortDropdown) {
+        sortDropdown.addEventListener('change', async (event) => {
+            currentSort = event.target.value;
+            currentPage = 1;
+            localStorage.setItem('currentSort', currentSort);
+            await loadGoods(currentPage, perPage, currentSort);
         });
     }
 });

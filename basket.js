@@ -1,9 +1,10 @@
-const API_URL = "https://edu.std-900.ist.mospolytech.ru/exam-2024-1/api/goods"; 
+const API_URL = "https://edu.std-900.ist.mospolytech.ru/exam-2024-1/api/goods";
 const API_KEY = "7630fae5-737b-4cae-b85d-b7d7c246a48b";
-let goods = []; 
-let currentPage = 1; 
+let goods = [];
+let currentPage = 1;
 const perPage = 8;
 
+// Загрузка товаров с API
 async function loadGoods(currentPage, perPage) {
     try {
         const urlWithParams = `${API_URL}?api_key=${API_KEY}&page=${currentPage}&per_page=${perPage}`;
@@ -18,14 +19,15 @@ async function loadGoods(currentPage, perPage) {
         }
 
         const data = await response.json();
-        goods = data.goods; 
-        console.log('Массив товаров после загрузки:', goods); 
+        goods = data.goods;
+        console.log('Массив товаров после загрузки:', goods);
     } catch (error) {
         console.error('Ошибка загрузки товаров:', error);
         alert('Не удалось загрузить данные о товарах. Попробуйте позже.');
     }
 }
 
+// Отображение товаров на странице
 function displayGoods(goods) {
     const container = document.querySelector('.container-cards-basket');
     container.innerHTML = '';
@@ -38,9 +40,9 @@ function displayGoods(goods) {
         let starsHtml = '';
         for (let i = 1; i <= 5; i++) {
             if (i <= roundedRating) {
-                starsHtml += `<span class="star filled">⭐</span>`; 
+                starsHtml += `<span class="star filled">⭐</span>`;
             } else {
-                starsHtml += `<span class="star">☆</span>`; 
+                starsHtml += `<span class="star">☆</span>`;
             }
         }
 
@@ -70,40 +72,60 @@ function displayGoods(goods) {
             <div class="price">
                 ${priceHtml}
             </div>
-            <button class="add-button" data-id="${item.id}">Удалить</button>
+            <button class="remove-button" data-id="${item.id}">Удалить</button>
         `;
 
         container.appendChild(goodElement);
     });
+
+    // Добавление слушателей на кнопки удаления
+    addRemoveButtonListeners();
 }
 
+// Загрузка данных из localStorage
 function loadCart() {
-    const storedIds = JSON.parse(localStorage.getItem('cartIds')) || [];
-    const cartItems = goods.filter(item => storedIds.includes(String(item.id)));    
-    console.log(goods);
-    console.log(storedIds);
-    console.log(cartItems);
-    displayGoods(cartItems);
-    console.log('Тип storedIds:', typeof storedIds[0]);
-    console.log('Тип item.id:', typeof goods[0]?.id);
+    const cartGoods = JSON.parse(localStorage.getItem('cartGoods')) || [];
+    displayGoods(cartGoods);
 }
 
+// Удаление товара из корзины
+function addRemoveButtonListeners() {
+    const buttons = document.querySelectorAll('.remove-button');
 
+    buttons.forEach(button => {
+        button.addEventListener('click', () => {
+            const id = parseInt(button.getAttribute('data-id'));
+            let cartGoods = JSON.parse(localStorage.getItem('cartGoods')) || [];
+
+            // Удаляем товар из массива
+            cartGoods = cartGoods.filter(item => item.id !== id);
+
+            // Обновляем localStorage
+            localStorage.setItem('cartGoods', JSON.stringify(cartGoods));
+
+            // Обновляем отображение корзины
+            loadCart();
+        });
+    });
+}
+
+// Инициализация
 document.addEventListener('DOMContentLoaded', async () => {
     await loadGoods(currentPage, perPage);
 
     loadCart();
-    
+
+    // Переходы по кнопкам
     const basketButton = document.querySelector('.bi-list-ul');
     if (basketButton) {
-        basketButton.addEventListener('click', function() {
-            window.location.href = 'index.html'; 
+        basketButton.addEventListener('click', function () {
+            window.location.href = 'index.html';
         });
     }
 
-    const profileButton = document.querySelector('.bi-person-circle')
+    const profileButton = document.querySelector('.bi-person-circle');
     if (profileButton) {
-        profileButton.addEventListener('click', function() {
+        profileButton.addEventListener('click', function () {
             window.location.href = 'profile.html';
         });
     }

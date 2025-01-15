@@ -108,7 +108,7 @@ main {
 
 
 .good {
-    width: 250px; 
+    width: 200px; 
     border: 1px solid #ddd; 
     border-radius: 8px; 
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); 
@@ -292,7 +292,7 @@ footer {
     text-align: center;
 }
 
-.bi-basket, .bi-person-circle, .bi-list-ul {
+.bi-basket, .bi-person-circle, .bi-list-ul, .load-more {
     cursor: pointer;
 }
 
