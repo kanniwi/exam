@@ -70,16 +70,20 @@
 
                         <div class="single-info">
                             <label for="data">Дата доставки</label>
-                            <input type="date" id="data" name="data_delivery" required>
+                            <input type="date" id="delivery_date" name="delivery_date" required>
                         </div>
 
                         <div class="single-info">
                             <label class="time-delivery">Выберите время доставки</label>
                             <select id="delivery-time">
+                                <option value="08:00-12:00">08:00-12:00</option>
+                                <option value="12:00-14:00">12:00-14:00</option>
+                                <option value="14:00-18:00">14:00-18:00</option>
+                                <option value="18:00-22:00">18:00-22:00</option>
                             </select>
                         </div>
 
-                        <p class="total-cost-note"></p>                                                 
+                        <p class="total-cost-note">Итоговая стоимость</p>                                                 
             
                         <div class="submit-reset">
                             <button type="reset">Сбросить</button>

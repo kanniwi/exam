@@ -11,3 +11,46 @@
     padding: 15px;
     flex-direction: column;
 }
+
+.table-order {
+    width: 100%;
+    border-collapse: collapse;
+    padding: 10px 30px;
+    box-sizing: border-box;
+}
+
+.orders-history {
+    width: 100%;
+}
+
+.table-order th, .table-order td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: center;
+}
+
+.table-order th {
+    background-color: #f4f4f4;
+    font-weight: bold;
+}
+
+.action-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.action-button i {
+    font-size: 1.2em;
+}
+
+.action-button.view i { color: blue; }
+.action-button.edit i { color: orange; }
+.action-button.delete i { color: red; }
+
+.orders-history {
+    width: 100%; /* Таблица занимает всю ширину родительского контейнера */
+    border-collapse: collapse; /* Убираем промежутки между границами */
+    box-sizing: border-box; /* Учитываем границы и паддинги в размере */
+}
+

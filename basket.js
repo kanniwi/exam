@@ -86,6 +86,7 @@ function displayGoods(goods) {
 function loadCart() {
     const cartGoods = JSON.parse(localStorage.getItem('cartGoods')) || [];
     displayGoods(cartGoods);
+    calculateTotalCost();
 }
 
 // Удаление товара из корзины
@@ -97,23 +98,130 @@ function addRemoveButtonListeners() {
             const id = parseInt(button.getAttribute('data-id'));
             let cartGoods = JSON.parse(localStorage.getItem('cartGoods')) || [];
 
-            // Удаляем товар из массива
             cartGoods = cartGoods.filter(item => item.id !== id);
-
-            // Обновляем localStorage
             localStorage.setItem('cartGoods', JSON.stringify(cartGoods));
-
-            // Обновляем отображение корзины
             loadCart();
         });
     });
 }
+
+// Функция для преобразования даты в формат "dd.mm.yyyy"
+function formatDateToDDMMYYYY(dateString) {
+    const [year, month, day] = dateString.split('-');
+    return `${day}.${month}.${year}`;
+}
+
+// Обработчик формы заказа
+document.querySelector('.order-grid').addEventListener('submit', async function (event) {
+    event.preventDefault(); // Отменяем стандартное поведение отправки формы
+
+    // Собираем данные из формы
+    const formData = new FormData(event.target);
+    const orderData = {
+        full_name: formData.get('full_name'),
+        email: formData.get('email'),
+        phone: formData.get('phone'),
+        subscribe: formData.get('subscribe') === 'on' ? 1 : 0,
+        delivery_address: formData.get('delivery_address'),
+        delivery_date: formatDateToDDMMYYYY(formData.get('delivery_date')),
+        delivery_interval: document.querySelector('#delivery-time').value,
+        comment: formData.get('comment') || '',
+        good_ids: [],
+    };
+
+    // Добавляем товары из корзины
+    const cartGoods = JSON.parse(localStorage.getItem('cartGoods')) || [];
+    orderData.good_ids = cartGoods.map(item => item.id);
+
+    // Проверяем, чтобы корзина не была пустой
+    if (orderData.good_ids.length === 0) {
+        alert('Корзина пуста. Добавьте товары для оформления заказа.');
+        return;
+    }
+
+    // URL для отправки заказа
+    const API_URL_ORDER = "https://edu.std-900.ist.mospolytech.ru/exam-2024-1/api/orders";
+
+    try {
+        const response = await fetch(`${API_URL_ORDER}?api_key=${API_KEY}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(orderData),
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            alert(`Ошибка: ${errorData.error || response.statusText}`);
+            return;
+        }
+
+        // Успешное оформление заказа
+        alert('Заказ успешно оформлен!');
+        localStorage.removeItem('cartGoods'); // Очищаем корзину
+        loadCart(); // Обновляем отображение корзины
+    } catch (error) {
+        console.error('Ошибка при отправке заказа:', error);
+        alert('Произошла ошибка. Попробуйте позже.');
+    }
+});
+
+function calculateTotalCost() {
+    const cartGoods = JSON.parse(localStorage.getItem('cartGoods')) || [];
+    let totalCost = 0;
+
+    // Считаем стоимость товаров
+    cartGoods.forEach(item => {
+        if (item.discount_price) {
+            totalCost += item.discount_price;
+        } else {
+            totalCost += item.actual_price;
+        }
+    });
+
+    // Определяем стоимость доставки
+    const deliveryCost = calculateDeliveryCost();
+
+    // Итоговая стоимость = товары + доставка
+    totalCost += deliveryCost;
+
+    // Отображаем итоговую стоимость на странице
+    const totalCostElement = document.querySelector('.total-cost-note');
+    totalCostElement.textContent = `Итоговая стоимость заказа: ${totalCost} ₽ (включая доставку: ${deliveryCost} ₽)`;
+}
+
+function calculateDeliveryCost() {
+    const baseDeliveryCost = 200;
+    const deliveryTime = document.querySelector('#delivery-time').value;
+    const deliveryDate = new Date(document.querySelector('#delivery_date').value);
+    const dayOfWeek = deliveryDate.getDay(); // 0 - воскресенье, 6 - суббота
+
+    let additionalCost = 0;
+
+    // Учитываем вечерние часы
+    if (deliveryTime === '18:00-21:00') {
+        additionalCost += 200;
+    }
+
+    // Учитываем выходные дни
+    if (dayOfWeek === 0 || dayOfWeek === 6) {
+        additionalCost += 300;
+    }
+
+    return baseDeliveryCost + additionalCost;
+}
+
+
 
 // Инициализация
 document.addEventListener('DOMContentLoaded', async () => {
     await loadGoods(currentPage, perPage);
 
     loadCart();
+
+    document.querySelector('#delivery_date').addEventListener('change', calculateTotalCost);
+    document.querySelector('#delivery-time').addEventListener('change', calculateTotalCost);
 
     // Переходы по кнопкам
     const basketButton = document.querySelector('.bi-list-ul');
