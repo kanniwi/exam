@@ -27,6 +27,25 @@
     <main>
         <div class="notifications">
         </div>
+        <div id="order-modal" class="modal hidden">
+            <div class="modal-content">
+                <span class="close-button">&times;</span>
+                <h2>Просмотр заказа</h2>
+                <ul>
+                    <li><strong>Дата оформления:</strong> <span id="order-date"></span></li>
+                    <li><strong>Имя:</strong> <span id="customer-name"></span></li>
+                    <li><strong>Номер телефона:</strong> <span id="customer-phone"></span></li>
+                    <li><strong>Email:</strong> <span id="customer-email"></span></li>
+                    <li><strong>Адрес доставки:</strong> <span id="delivery-address"></span></li>
+                    <li><strong>Дата доставки:</strong> <span id="delivery-date"></span></li>
+                    <li><strong>Время доставки:</strong> <span id="delivery-interval"></span></li>
+                    <li><strong>Состав заказа:</strong> <span id="order-items"></span></li>
+                    <li><strong>Стоимость:</strong> <span id="order-cost"></span></li>
+                    <li><strong>Комментарий:</strong> <span id="order-comment"></span></li>
+                </ul>
+                <button class="modal-close-button">OK</button>
+            </div>
+        </div>        
         <div class="container-main-profile">
             <p class="profile-paragraph">Заказы</p>
             <div class="table-order">

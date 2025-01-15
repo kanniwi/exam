@@ -207,6 +207,65 @@ async function deleteOrder(orderId) {
     }
 }
 
+async function showOrderDetails(orderId) {
+    try {
+        const response = await fetch(`${API_URL}/${orderId}?api_key=${API_KEY}`);
+        if (!response.ok) {
+            const errorData = await response.json();
+            alert(`Ошибка загрузки заказа: ${errorData.error || response.statusText}`);
+            return;
+        }
+
+        const order = await response.json();
+
+        // Обновляем модальное окно данными заказа
+        document.getElementById('order-date').textContent = new Date(order.created_at).toLocaleString();
+        document.getElementById('customer-name').textContent = order.full_name || 'Нет данных';
+        document.getElementById('customer-phone').textContent = order.phone || 'Нет данных';
+        document.getElementById('customer-email').textContent = order.email || 'Нет данных';
+        document.getElementById('delivery-address').textContent = order.delivery_address || 'Нет данных';
+        document.getElementById('delivery-date').textContent = order.delivery_date || 'Нет данных';
+        document.getElementById('delivery-interval').textContent = order.delivery_interval || 'Нет данных';
+        document.getElementById('order-comment').textContent = order.comment || 'Нет комментариев';
+
+        // Получаем данные о товарах
+        const goodsInfo = await Promise.all(order.good_ids.map(fetchGoodById));
+        const goodsNames = goodsInfo
+            .filter(good => good !== null)
+            .map(good => truncateName(good.name))
+            .join(', ');
+
+        document.getElementById('order-items').textContent = goodsNames || 'Нет данных о товарах';
+
+        // Рассчитываем стоимость доставки и итоговую стоимость
+        const goodsTotalPrice = goodsInfo.reduce((sum, good) => {
+            if (!good || (!good.price && !good.discount_price)) return sum;
+            const price = good.discount_price || good.price;
+            return sum + price;
+        }, 0);
+
+        const deliveryCost = calculateDeliveryCost(order.delivery_date, order.delivery_interval);
+        const totalPriceWithDelivery = goodsTotalPrice + deliveryCost;
+
+        document.getElementById('order-cost').textContent = `${totalPriceWithDelivery} ₽ (включая доставку: ${deliveryCost} ₽)`;
+
+        // Показываем модальное окно
+        const modal = document.getElementById('order-modal');
+        modal.classList.remove('hidden');
+
+        // Обработчик закрытия окна
+        const closeModal = () => {
+            modal.classList.add('hidden');
+        };
+
+        document.querySelector('.close-button').addEventListener('click', closeModal);
+        document.querySelector('.modal-close-button').addEventListener('click', closeModal);
+    } catch (error) {
+        console.error('Ошибка загрузки данных заказа:', error);
+        alert('Не удалось загрузить данные заказа.');
+    }
+}
+
 // Обработчики кнопок в хедере
 document.addEventListener('DOMContentLoaded', async () => {
     await loadOrders();
