@@ -266,6 +266,118 @@ async function showOrderDetails(orderId) {
     }
 }
 
+async function editOrder(orderId) {
+    try {
+        const response = await fetch(`${API_URL}/${orderId}?api_key=${API_KEY}`);
+        if (!response.ok) {
+            showNotification('Ошибка загрузки данных заказа', 'error');
+            return;
+        }
+
+        const order = await response.json();
+
+        // Заполняем форму текущими данными
+        document.getElementById('edit-customer-name').value = order.full_name || '';
+        document.getElementById('edit-customer-phone').value = order.phone || '';
+        document.getElementById('edit-customer-email').value = order.email || '';
+        document.getElementById('edit-delivery-address').value = order.delivery_address || '';
+        document.getElementById('edit-delivery-date').value = order.delivery_date || '';
+        document.getElementById('edit-delivery-interval').value = order.delivery_interval || '';
+        document.getElementById('edit-order-comment').value = order.comment || '';
+
+        const modal = document.getElementById('edit-order-modal');
+        modal.classList.remove('hidden');
+
+        // Закрытие модального окна
+        const closeModal = () => {
+            modal.classList.add('hidden');
+        };
+
+        // Обработчик кнопки "Отмена"
+        const cancelButton = document.querySelector('button[type="cancel-button"]');
+        cancelButton.addEventListener('click', (e) => {
+            e.preventDefault(); // Предотвращаем стандартное поведение кнопки
+            closeModal(); // Закрываем модальное окно
+            showNotification('Сохранения не были внесены', 'info'); // Уведомление
+        });
+
+        // Обработчик формы "Сохранить"
+        const form = document.getElementById('edit-order-form');
+        form.onsubmit = async (e) => {
+            e.preventDefault();
+
+            const updatedData = {
+                full_name: document.getElementById('edit-customer-name').value,
+                phone: document.getElementById('edit-customer-phone').value,
+                email: document.getElementById('edit-customer-email').value,
+                delivery_address: document.getElementById('edit-delivery-address').value,
+                delivery_date: document.getElementById('edit-delivery-date').value,
+                delivery_interval: document.getElementById('edit-delivery-interval').value,
+                comment: document.getElementById('edit-order-comment').value,
+            };
+
+            try {
+                const putResponse = await fetch(`${API_URL}/${orderId}?api_key=${API_KEY}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(updatedData),
+                });
+
+                if (!putResponse.ok) {
+                    const errorData = await putResponse.json();
+                    showNotification(`Ошибка сохранения: ${errorData.error || 'Неизвестная ошибка'}`, 'error');
+                    return;
+                }
+
+                showNotification('Данные успешно обновлены', 'success');
+                closeModal(); // Закрываем модальное окно после сохранения
+                await loadOrders(); // Обновляем список заказов
+            } catch (error) {
+                console.error('Ошибка сохранения данных заказа:', error);
+                showNotification('Произошла ошибка при сохранении данных', 'error');
+            }
+        };
+    } catch (error) {
+        console.error('Ошибка редактирования заказа:', error);
+        showNotification('Не удалось загрузить данные заказа', 'error');
+    }
+}
+
+
+
+
+
+function showNotification(message, type = 'info') {
+    const notificationsContainer = document.querySelector('.notifications');
+    const notification = document.createElement('div');
+    notification.classList.add('notification', type);
+
+    const cancelButton = document.createElement('button');
+    cancelButton.textContent = 'Отмена';
+    cancelButton.classList.add('cancel-button');
+
+    notification.textContent = message;
+    notification.appendChild(cancelButton);
+    notificationsContainer.appendChild(notification);
+
+    // Обработчик нажатия на кнопку "Отмена"
+    cancelButton.addEventListener('click', () => {
+        notification.remove();
+    });
+
+    // Удаляем уведомление через 5 секунд (если его не закрыли вручную)
+    setTimeout(() => {
+        if (notification.parentNode) {
+            notification.remove();
+        }
+    }, 5000);
+}
+
+
+
+
 // Обработчики кнопок в хедере
 document.addEventListener('DOMContentLoaded', async () => {
     await loadOrders();

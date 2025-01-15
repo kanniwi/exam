@@ -45,7 +45,44 @@
                 </ul>
                 <button class="modal-close-button">OK</button>
             </div>
-        </div>        
+        </div>  
+        <div id="edit-order-modal" class="modal hidden">
+            <div class="modal-content">
+                <button class="close-button">&times;</button>
+                <h2>Редактирование заказа</h2>
+                <form id="edit-order-form">
+                    <label>Имя клиента</label>
+                    <input id="edit-customer-name" type="text" required />
+        
+                    <label>Email</label>
+                    <input id="edit-customer-email" type="email" required />
+        
+                    <label>Телефон</label>
+                    <input id="edit-customer-phone" type="tel" required />
+        
+                    <label>Адрес доставки</label>
+                    <input id="edit-delivery-address" type="text" required />
+        
+                    <label>Дата доставки</label>
+                    <input id="edit-delivery-date" type="date" required />
+        
+                    <label>Временной интервал доставки</label>
+                    <select id="edit-delivery-interval">
+                        <option value="9:00-12:00">9:00-12:00</option>
+                        <option value="12:00-15:00">12:00-15:00</option>
+                        <option value="15:00-18:00">15:00-18:00</option>
+                        <option value="18:00-22:00">18:00-22:00</option>
+                    </select>
+        
+                    <label>Комментарий</label>
+                    <textarea id="edit-order-comment"></textarea>
+        
+                    <button type="submit">Сохранить</button>
+                    <button type="cancel-button">Отмена</button>
+                </form>
+            </div>
+        </div>
+                     
         <div class="container-main-profile">
             <p class="profile-paragraph">Заказы</p>
             <div class="table-order">
