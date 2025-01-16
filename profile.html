@@ -27,6 +27,15 @@
     <main>
         <div class="notifications">
         </div>
+        <div id="delete-order-modal" class="modal hidden">
+            <div class="modal-content">
+                <h2>Удалить заказ?</h2>
+                <p>Вы уверены, что хотите удалить этот заказ?</p>
+                <button id="confirm-delete" class="btn btn-danger">Да</button>
+                <button id="cancel-delete" class="btn btn-secondary">Нет</button>
+            </div>
+        </div>
+        
         <div id="order-modal" class="modal hidden">
             <div class="modal-content">
                 <span class="close-button">&times;</span>
@@ -43,7 +52,7 @@
                     <li><strong>Стоимость:</strong> <span id="order-cost"></span></li>
                     <li><strong>Комментарий:</strong> <span id="order-comment"></span></li>
                 </ul>
-                <button class="modal-close-button">OK</button>
+                <button class="order-modal-close-button">OK</button>
             </div>
         </div>  
         <div id="edit-order-modal" class="modal hidden">
@@ -68,10 +77,10 @@
         
                     <label>Временной интервал доставки</label>
                     <select id="edit-delivery-interval">
-                        <option value="9:00-12:00">9:00-12:00</option>
-                        <option value="12:00-15:00">12:00-15:00</option>
-                        <option value="15:00-18:00">15:00-18:00</option>
-                        <option value="18:00-22:00">18:00-22:00</option>
+                        <option value="08:00-12:00">08:00-12:00</option>
+                            <option value="12:00-14:00">12:00-14:00</option>
+                            <option value="14:00-18:00">14:00-18:00</option>
+                            <option value="18:00-22:00">18:00-22:00</option>
                     </select>
         
                     <label>Комментарий</label>

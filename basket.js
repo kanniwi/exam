@@ -199,14 +199,15 @@ function calculateDeliveryCost() {
 
     let additionalCost = 0;
 
-    // Учитываем вечерние часы
-    if (deliveryTime === '18:00-22:00') {
-        additionalCost += 200;
-    }
-
     // Учитываем выходные дни
     if (dayOfWeek === 0 || dayOfWeek === 6) {
         additionalCost += 300;
+    }
+    // Учитываем вечерние часы
+    else {
+        if (deliveryTime === '18:00-22:00') {
+        additionalCost += 200;
+        }
     }
 
     return baseDeliveryCost + additionalCost;
