@@ -36,7 +36,7 @@ async function loadOrders() {
         const response = await fetch(`${API_URL}?api_key=${API_KEY}`);
         if (!response.ok) {
             const errorData = await response.json();
-            alert(`Ошибка загрузки заказов: ${errorData.error || response.statusText}`);
+            showNotification(`Ошибка загрузки заказов: ${errorData.error || response.statusText}`, 'error');
             throw new Error('Ошибка загрузки заказов');
         }
 
@@ -46,6 +46,25 @@ async function loadOrders() {
         console.error('Ошибка загрузки заказов:', error);
     }
 }
+
+// Обработчики кнопок в хедере
+document.addEventListener('DOMContentLoaded', async () => {
+    await loadOrders();
+    const basketButton = document.querySelector('.bi-list-ul');
+    if (basketButton) {
+        basketButton.addEventListener('click', function () {
+            window.location.href = 'index.html';
+        });
+    }
+
+    const profileButton = document.querySelector('.bi-basket');
+    if (profileButton) {
+        profileButton.addEventListener('click', function () {
+            window.location.href = 'basket.html';
+        });
+    }
+    await loadOrders();
+});
 
 // Функция для получения данных о товаре по его ID
 async function fetchGoodById(goodId) {
@@ -91,9 +110,9 @@ async function displayOrders(orders) {
             </tr>
         </thead>
         <tbody>
-            ${orders.map(order => `
+            ${orders.map((order, index) => `
                 <tr id="order-${order.id}">
-                    <td>${order.id}</td>
+                    <td>${index + 1}</td> <!-- Используем индекс массива для порядкового номера -->
                     <td>${new Date(order.created_at).toLocaleString()}</td>
                     <td class="order-goods">Загрузка...</td>
                     <td class="order-total-price">Загрузка...</td>
@@ -128,9 +147,6 @@ async function displayOrders(orders) {
             const price = good.discount_price || good.price;
             return sum + price;
         }, 0);
-            
-
-        console.log(goodsTotalPrice);
 
         const deliveryCost = calculateDeliveryCost(order.delivery_date, order.delivery_interval);
 
@@ -145,6 +161,7 @@ async function displayOrders(orders) {
 
     addActionListeners();
 }
+
 
 // Функция для добавления обработчиков кнопок "Просмотр", "Редактирование", "Удаление"
 function addActionListeners() {
@@ -174,25 +191,19 @@ function addActionListeners() {
     });
 }
 
-
-
 async function deleteOrder(orderId) {
-    // Показываем модальное окно
     const modal = document.getElementById('delete-order-modal');
     modal.classList.remove('hidden');
 
-    // Получаем кнопки подтверждения и отмены
     const confirmButton = document.getElementById('confirm-delete');
     const cancelButton = document.getElementById('cancel-delete');
 
-    // Обработчик для кнопки "Нет" (отмена)
     const handleCancel = () => {
-        modal.classList.add('hidden'); // Скрываем модальное окно
+        modal.classList.add('hidden'); 
         confirmButton.removeEventListener('click', handleConfirm);
         cancelButton.removeEventListener('click', handleCancel);
     };
 
-    // Обработчик для кнопки "Да" (подтверждение удаления)
     const handleConfirm = async () => {
         try {
             const response = await fetch(`${API_URL}/${orderId}?api_key=${API_KEY}`, {
@@ -218,8 +229,6 @@ async function deleteOrder(orderId) {
     confirmButton.addEventListener('click', handleConfirm);
     cancelButton.addEventListener('click', handleCancel);
 }
-
-
 
 async function showOrderDetails(orderId) {
     try {
@@ -277,7 +286,7 @@ async function showOrderDetails(orderId) {
     }
 }
 
-// Глобальная переменная для хранения обработчика
+
 let handleCancelClick;
 
 async function editOrder(orderId) {
@@ -383,24 +392,3 @@ function showNotification(message, type) {
         }
     }, 5000);
 }
-
-// Обработчики кнопок в хедере
-document.addEventListener('DOMContentLoaded', async () => {
-    await loadOrders();
-    const basketButton = document.querySelector('.bi-list-ul');
-    if (basketButton) {
-        basketButton.addEventListener('click', function () {
-            window.location.href = 'index.html';
-        });
-    }
-
-    const profileButton = document.querySelector('.bi-basket');
-    if (profileButton) {
-        profileButton.addEventListener('click', function () {
-            window.location.href = 'basket.html';
-        });
-    }
-
-    // Загружаем и отображаем заказы
-    await loadOrders();
-});
