@@ -12,22 +12,17 @@ function calculateDeliveryCost(deliveryDate, deliveryInterval) {
     const deliveryDay = new Date(deliveryDate).getDay();
     // console.log("Day of the week:", deliveryDay);
 
-    // Проверяем, является ли день выходным (воскресенье или суббота)
     const isWeekend = deliveryDay === 0 || deliveryDay === 6;
 
-    // Проверяем, если доставка в вечерние часы (с 18:00 до 22:00)
     const isEvening = (deliveryInterval == "18:00-22:00");
     // console.log(isEvening);
 
-    // Базовая стоимость доставки
     let deliveryCost = baseDeliveryCost;
 
-    // Если выходные, добавляем дополнительную стоимость
     if (isWeekend) {
         deliveryCost += weekendDeliveryCost;
     }
 
-    // Если вечерняя доставка, добавляем дополнительную стоимость
     if (isEvening) {
         deliveryCost += eveningDeliveryCost;
     }
@@ -75,7 +70,7 @@ function truncateName(name) {
 // Функция для отображения заказов
 async function displayOrders(orders) {
     const tableContainer = document.querySelector('.table-order');
-    tableContainer.innerHTML = ''; // Очищаем контейнер перед добавлением данных
+    tableContainer.innerHTML = ''; 
 
     if (orders.length === 0) {
         tableContainer.innerHTML = '<p>Нет оформленных заказов</p>';
@@ -129,18 +124,16 @@ async function displayOrders(orders) {
             .join(', ');
 
         const goodsTotalPrice = goodsInfo.reduce((sum, good) => {
-            if (!good || (!good.price && !good.discount_price)) return sum; // Убедитесь, что у товара есть цена
-            const price = good.discount_price || good.price; // Используйте скидочную цену, если она есть
+            if (!good || (!good.price && !good.discount_price)) return sum;
+            const price = good.discount_price || good.price;
             return sum + price;
         }, 0);
             
 
         console.log(goodsTotalPrice);
 
-        // Рассчитываем стоимость доставки
         const deliveryCost = calculateDeliveryCost(order.delivery_date, order.delivery_interval);
 
-        // Общая стоимость с учетом доставки
         const totalPriceWithDelivery = goodsTotalPrice + deliveryCost;
 
         const orderRow = document.getElementById(`order-${order.id}`);
@@ -150,7 +143,6 @@ async function displayOrders(orders) {
         }
     });
 
-    // Добавляем обработчики для кнопок действий
     addActionListeners();
 }
 
@@ -182,30 +174,52 @@ function addActionListeners() {
     });
 }
 
-// Функция для удаления заказа
+
+
 async function deleteOrder(orderId) {
-    if (!confirm('Вы уверены, что хотите удалить этот заказ?')) {
-        return;
-    }
+    // Показываем модальное окно
+    const modal = document.getElementById('delete-order-modal');
+    modal.classList.remove('hidden');
 
-    try {
-        const response = await fetch(`${API_URL}/${orderId}?api_key=${API_KEY}`, {
-            method: 'DELETE',
-        });
+    // Получаем кнопки подтверждения и отмены
+    const confirmButton = document.getElementById('confirm-delete');
+    const cancelButton = document.getElementById('cancel-delete');
 
-        if (!response.ok) {
-            const errorData = await response.json();
-            alert(`Ошибка удаления заказа: ${errorData.error || response.statusText}`);
-            return;
+    // Обработчик для кнопки "Нет" (отмена)
+    const handleCancel = () => {
+        modal.classList.add('hidden'); // Скрываем модальное окно
+        confirmButton.removeEventListener('click', handleConfirm);
+        cancelButton.removeEventListener('click', handleCancel);
+    };
+
+    // Обработчик для кнопки "Да" (подтверждение удаления)
+    const handleConfirm = async () => {
+        try {
+            const response = await fetch(`${API_URL}/${orderId}?api_key=${API_KEY}`, {
+                method: 'DELETE',
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                showNotification(`Ошибка удаления заказа: ${errorData.error || response.statusText}`, 'error');
+                return;
+            }
+
+            showNotification('Заказ успешно удалён', 'success'); 
+            await loadOrders(); 
+        } catch (error) {
+            console.error('Ошибка удаления заказа:', error);
+            showNotification('Произошла ошибка при удалении заказа. Попробуйте позже.', 'error');
+        } finally {
+            handleCancel(); 
         }
+    };
 
-        alert('Заказ успешно удалён');
-        await loadOrders(); // Обновляем список заказов
-    } catch (error) {
-        console.error('Ошибка удаления заказа:', error);
-        alert('Произошла ошибка при удалении заказа. Попробуйте позже.');
-    }
+    confirmButton.addEventListener('click', handleConfirm);
+    cancelButton.addEventListener('click', handleCancel);
 }
+
+
 
 async function showOrderDetails(orderId) {
     try {
@@ -237,7 +251,6 @@ async function showOrderDetails(orderId) {
 
         document.getElementById('order-items').textContent = goodsNames || 'Нет данных о товарах';
 
-        // Рассчитываем стоимость доставки и итоговую стоимость
         const goodsTotalPrice = goodsInfo.reduce((sum, good) => {
             if (!good || (!good.price && !good.discount_price)) return sum;
             const price = good.discount_price || good.price;
@@ -249,11 +262,9 @@ async function showOrderDetails(orderId) {
 
         document.getElementById('order-cost').textContent = `${totalPriceWithDelivery} ₽ (включая доставку: ${deliveryCost} ₽)`;
 
-        // Показываем модальное окно
         const modal = document.getElementById('order-modal');
         modal.classList.remove('hidden');
 
-        // Обработчик закрытия окна
         const closeModal = () => {
             modal.classList.add('hidden');
         };
@@ -266,6 +277,8 @@ async function showOrderDetails(orderId) {
     }
 }
 
+// Глобальная переменная для хранения обработчика
+let handleCancelClick;
 
 async function editOrder(orderId) {
     try {
@@ -289,20 +302,26 @@ async function editOrder(orderId) {
         const modal = document.getElementById('edit-order-modal');
         modal.classList.remove('hidden');
 
-        // Закрытие модального окна
         const closeModal = () => {
             modal.classList.add('hidden');
         };
 
-        // Обработчик кнопки "Отмена"
         const cancelButton = document.querySelector('button[type="cancel-button"]');
-        cancelButton.addEventListener('click', (e) => {
-            e.preventDefault(); // Предотвращаем стандартное поведение кнопки
-            closeModal(); // Закрываем модальное окно
-            showNotification('Сохранения не были внесены', 'info'); // Уведомление
-        });
+        if (cancelButton) {
 
-        // Обработчик формы "Сохранить"
+            if (handleCancelClick) {
+                cancelButton.removeEventListener('click', handleCancelClick);
+            }
+
+            handleCancelClick = (e) => {
+                e.preventDefault();
+                closeModal();
+                showNotification('Сохранения не были внесены', 'info');
+            };
+
+            cancelButton.addEventListener('click', handleCancelClick);
+        }
+
         const form = document.getElementById('edit-order-form');
         form.onsubmit = async (e) => {
             e.preventDefault();
@@ -333,8 +352,8 @@ async function editOrder(orderId) {
                 }
 
                 showNotification('Данные успешно обновлены', 'success');
-                closeModal(); // Закрываем модальное окно после сохранения
-                await loadOrders(); // Обновляем список заказов
+                closeModal();
+                await loadOrders();
             } catch (error) {
                 console.error('Ошибка сохранения данных заказа:', error);
                 showNotification('Произошла ошибка при сохранении данных', 'error');
@@ -346,38 +365,24 @@ async function editOrder(orderId) {
     }
 }
 
-
-
-
-
-function showNotification(message, type = 'info') {
+function showNotification(message, type) {
     const notificationsContainer = document.querySelector('.notifications');
     const notification = document.createElement('div');
-    notification.classList.add('notification', type);
 
-    const cancelButton = document.createElement('button');
-    cancelButton.textContent = 'Отмена';
-    cancelButton.classList.add('cancel-button');
+    notification.classList.add('notification');
+
+    notification.classList.add(type);
 
     notification.textContent = message;
-    notification.appendChild(cancelButton);
+
     notificationsContainer.appendChild(notification);
 
-    // Обработчик нажатия на кнопку "Отмена"
-    cancelButton.addEventListener('click', () => {
-        notification.remove();
-    });
-
-    // Удаляем уведомление через 5 секунд (если его не закрыли вручную)
     setTimeout(() => {
         if (notification.parentNode) {
             notification.remove();
         }
     }, 5000);
 }
-
-
-
 
 // Обработчики кнопок в хедере
 document.addEventListener('DOMContentLoaded', async () => {

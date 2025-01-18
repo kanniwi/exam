@@ -205,5 +205,16 @@
     right: 10px;
 }
 
+.notification.info {
+    background-color: #b1d3f7;
+}
+
+.notification.success {
+    background-color: #77ff97; 
+}
+
+.notification .error {
+    background-color: #ff949f; 
+}
 
 

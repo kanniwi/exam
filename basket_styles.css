@@ -78,3 +78,22 @@
     cursor: pointer;
 }
 
+.notification {
+    padding: 10px 20px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    position: relative;
+}
+
+.notification.info {
+    background-color: #b1d3f7;
+}
+
+.notification.success {
+    background-color: #77ff97; 
+}
+
+.notification .error {
+    background-color: #ff949f; 
+}
+

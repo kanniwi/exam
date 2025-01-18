@@ -2,7 +2,26 @@ const API_URL = "https://edu.std-900.ist.mospolytech.ru/exam-2024-1/api/goods";
 const API_KEY = "7630fae5-737b-4cae-b85d-b7d7c246a48b";
 let goods = [];
 let currentPage = 1;
-const perPage = 8;
+const perPage = 10;
+
+function showNotification(message, type) {
+    const notificationsContainer = document.querySelector('.notifications');
+    const notification = document.createElement('div');
+
+    notification.classList.add('notification');
+
+    notification.classList.add(type);
+
+    notification.textContent = message;
+
+    notificationsContainer.appendChild(notification);
+
+    setTimeout(() => {
+        if (notification.parentNode) {
+            notification.remove();
+        }
+    }, 5000);
+}
 
 // Загрузка товаров с API
 async function loadGoods(currentPage, perPage) {
@@ -23,7 +42,7 @@ async function loadGoods(currentPage, perPage) {
         console.log('Массив товаров после загрузки:', goods);
     } catch (error) {
         console.error('Ошибка загрузки товаров:', error);
-        alert('Не удалось загрузить данные о товарах. Попробуйте позже.');
+        showNotification('Не удалось загрузить данные о товарах. Попробуйте позже.', 'error');
     }
 }
 
@@ -133,12 +152,6 @@ document.querySelector('.order-grid').addEventListener('submit', async function 
     const cartGoods = JSON.parse(localStorage.getItem('cartGoods')) || [];
     orderData.good_ids = cartGoods.map(item => item.id);
 
-    // Проверяем, чтобы корзина не была пустой
-    if (orderData.good_ids.length === 0) {
-        alert('Корзина пуста. Добавьте товары для оформления заказа.');
-        return;
-    }
-
     // URL для отправки заказа
     const API_URL_ORDER = "https://edu.std-900.ist.mospolytech.ru/exam-2024-1/api/orders";
 
@@ -158,12 +171,12 @@ document.querySelector('.order-grid').addEventListener('submit', async function 
         }
 
         // Успешное оформление заказа
-        alert('Заказ успешно оформлен!');
+        showNotification('Заказ успешно оформлен!', 'success');
         localStorage.removeItem('cartGoods'); // Очищаем корзину
         loadCart(); // Обновляем отображение корзины
     } catch (error) {
         console.error('Ошибка при отправке заказа:', error);
-        alert('Произошла ошибка. Попробуйте позже.');
+        showNotification('Произошла ошибка. Попробуйте позже.', 'error');
     }
 });
 
