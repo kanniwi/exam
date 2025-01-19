@@ -235,7 +235,7 @@ async function showOrderDetails(orderId) {
         const response = await fetch(`${API_URL}/${orderId}?api_key=${API_KEY}`);
         if (!response.ok) {
             const errorData = await response.json();
-            alert(`Ошибка загрузки заказа: ${errorData.error || response.statusText}`);
+            showNotification(`Ошибка загрузки заказа: ${errorData.error || response.statusText}`, 'error');
             return;
         }
 
@@ -243,9 +243,9 @@ async function showOrderDetails(orderId) {
 
         // Обновляем модальное окно данными заказа
         document.getElementById('order-date').textContent = new Date(order.created_at).toLocaleString();
-        document.getElementById('customer-name').textContent = order.customer_name || 'Нет данных';
-        document.getElementById('customer-phone').textContent = order.customer_phone || 'Нет данных';
-        document.getElementById('customer-email').textContent = order.customer_email || 'Нет данных';
+        document.getElementById('customer-name').textContent = order.full_name || 'Нет данных';
+        document.getElementById('customer-phone').textContent = order.phone || 'Нет данных';
+        document.getElementById('customer-email').textContent = order.email || 'Нет данных';
         document.getElementById('delivery-address').textContent = order.delivery_address || 'Нет данных';
         document.getElementById('delivery-date').textContent = order.delivery_date || 'Нет данных';
         document.getElementById('delivery-interval').textContent = order.delivery_interval || 'Нет данных';
@@ -282,7 +282,7 @@ async function showOrderDetails(orderId) {
         document.querySelector('.order-modal-close-button').addEventListener('click', closeModal);
     } catch (error) {
         console.error('Ошибка загрузки данных заказа:', error);
-        alert('Не удалось загрузить данные заказа.');
+        showNotification('Не удалось загрузить данные заказа.', 'error');
     }
 }
 

@@ -7,6 +7,25 @@ let totalPages = 1;
 let currentSort = "rating_desc";
 let data = [];
 
+function showNotification(message, type) {
+    const notificationsContainer = document.querySelector('.notifications');
+    const notification = document.createElement('div');
+
+    notification.classList.add('notification');
+
+    notification.classList.add(type);
+
+    notification.textContent = message;
+
+    notificationsContainer.appendChild(notification);
+
+    setTimeout(() => {
+        if (notification.parentNode) {
+            notification.remove();
+        }
+    }, 5000);
+}
+
 function addListenersToButtons() {
     const buttons = document.querySelectorAll('.add-button');
     buttons.forEach(button => {
@@ -117,7 +136,7 @@ async function loadGoods(page, perPage, sortOrder = "rating_desc", append = fals
         }
     } catch (error) {
         console.error('Ошибка загрузки товаров:', error);
-        alert('Не удалось загрузить данные. Попробуйте позже.');
+        showNotification('Не удалось загрузить данные. Попробуйте позже.', 'error');
     }
 }
 

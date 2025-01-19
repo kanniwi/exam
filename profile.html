@@ -16,7 +16,7 @@
     <header>
         <div class="header-container">
             <div class="logo">
-                <i class="bi bi-door-closed"></i>
+                <i class="bi bi-shop-window"></i>
             </div>
             <div class="basket-profile">
                 <i class="bi bi-list-ul"></i>
@@ -30,7 +30,7 @@
         <div id="delete-order-modal" class="modal hidden">
             <div class="modal-content">
                 <h2>Удалить заказ?</h2>
-                <p>Вы уверены, что хотите удалить этот заказ?</p>
+                <p class="delete-indentation">Вы уверены, что хотите удалить этот заказ?</p>
                 <button id="confirm-delete" class="btn btn-danger">Да</button>
                 <button id="cancel-delete" class="btn btn-secondary">Нет</button>
             </div>
@@ -40,24 +40,23 @@
             <div class="modal-content">
                 <span class="close-button">&times;</span>
                 <h2>Просмотр заказа</h2>
-                <ul>
-                    <li><strong>Дата оформления:</strong> <span id="order-date"></span></li>
-                    <li><strong>Имя:</strong> <span id="customer-name"></span></li>
-                    <li><strong>Номер телефона:</strong> <span id="customer-phone"></span></li>
-                    <li><strong>Email:</strong> <span id="customer-email"></span></li>
-                    <li><strong>Адрес доставки:</strong> <span id="delivery-address"></span></li>
-                    <li><strong>Дата доставки:</strong> <span id="delivery-date"></span></li>
-                    <li><strong>Время доставки:</strong> <span id="delivery-interval"></span></li>
-                    <li><strong>Состав заказа:</strong> <span id="order-items"></span></li>
-                    <li><strong>Стоимость:</strong> <span id="order-cost"></span></li>
-                    <li><strong>Комментарий:</strong> <span id="order-comment"></span></li>
-                </ul>
-                <button class="order-modal-close-button">OK</button>
+                    <p>Дата оформления: <span id="order-date"></span></p>
+                    <p>Имя: <span id="customer-name"></span></p>
+                    <p>Номер телефона: <span id="customer-phone"></span></p>
+                    <p>Email: <span id="customer-email"></span></p>
+                    <p>Адрес доставки: <span id="delivery-address"></span></p>
+                    <p>Дата доставки: <span id="delivery-date"></span></p>
+                    <p>Время доставки: <span id="delivery-interval"></span></p>
+                    <p>Состав заказа: <span id="order-items"></span></p>
+                    <p>Стоимость: <span id="order-cost"></span></p>
+                    <p>Комментарий: <span id="order-comment"></span></p>
+                <div class="modal-footer">
+                    <button class="order-modal-close-button">OK</button>
+                </div>
             </div>
         </div>  
         <div id="edit-order-modal" class="modal hidden">
             <div class="modal-content">
-                <button class="close-button">&times;</button>
                 <h2>Редактирование заказа</h2>
                 <form id="edit-order-form">
                     <label>Имя клиента</label>
@@ -86,8 +85,10 @@
                     <label>Комментарий</label>
                     <textarea id="edit-order-comment"></textarea>
         
-                    <button type="submit">Сохранить</button>
-                    <button type="cancel-button">Отмена</button>
+                    <div class="modal-footer-edit">
+                        <button type="submit">Сохранить</button>
+                        <button type="cancel-button">Отмена</button>
+                    </div>
                 </form>
             </div>
         </div>
@@ -114,6 +115,9 @@
     </main>
     <footer id="contacts">
         <p>&#169; 2025 Название компании</p>
+        <p>Контакты:</p>
+        <p>Email: <a href="mailto: bardinaanny@gmail.com">bardinaanny@gmail.com</a></p>
+        <p>Телефон: <a href="tel:+79028899100">+7 902 889 91 00</a></p>
     </footer>
     <script src="profile.js"></script>
 </body>
