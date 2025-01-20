@@ -101,7 +101,7 @@ async function displayOrders(orders) {
     table.innerHTML = `
         <thead>
             <tr>
-                <th>#</th>
+                <th>№</th>
                 <th>Дата оформления</th>
                 <th>Состав заказа</th>
                 <th>Стоимость</th>

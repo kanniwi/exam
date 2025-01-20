@@ -97,3 +97,66 @@
     background-color: #ff949f; 
 }
 
+
+@media (max-width: 768px) {
+    .order-grid {
+        grid-template-columns: 1fr; 
+        gap: 30px;
+    }
+
+    .container-cards-basket {
+        grid-template-columns: repeat(2, 1fr); 
+        padding: 20px 20px;
+    }
+
+    .submit-reset {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .submit-reset button {
+        width: 100%;
+    }
+
+    .basket-paragraph {
+        font-size: 20px; 
+    }
+}
+
+@media (max-width: 540px) {
+    .container-main-basket {
+        padding: 10px;
+    }
+
+    .order-grid {
+        grid-template-columns: 1fr; 
+        gap: 20px;
+    }
+
+    .container-cards-basket {
+        grid-template-columns: 1fr; 
+        padding: 10px 10px; 
+    }
+
+    .submit-reset {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .submit-reset button {
+        width: 100%;
+        height: 40px; 
+    }
+
+    .basket-paragraph {
+        font-size: 18px;
+    }
+
+    .total-cost-note {
+        font-size: 14px; 
+    }
+
+    .notification {
+        font-size: 14px; 
+    }
+}

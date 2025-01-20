@@ -155,7 +155,7 @@ form input, form select, form textarea {
     margin-bottom: 15px;
     border: 1px solid #ccc;
     border-radius: 4px;
-    display: block; /* Перенос на новую строку */
+    display: block; 
 }
 
 textarea {
@@ -176,4 +176,53 @@ textarea {
     background-color: #ff949f; 
 }
 
+
+@media (max-width: 650px) {
+    .profile-paragraph {
+        font-size: 16px;
+    }
+
+    .container-main-profile {
+        padding: 5px;
+    }
+
+    .table-order th, .table-order td {
+        padding: 5px;
+    }
+
+    .action-button i {
+        font-size: 1em;
+    }
+
+    .modal-content {
+        width: 80%;
+        padding: 15px;
+    }
+
+    .modal-footer button {
+        padding: 6px 12px;
+    }
+
+    .btn-danger, .btn-secondary {
+        width: 100%;
+        margin-top: 10px;
+    }
+
+    .notification {
+        font-size: 12px;
+        padding: 8px 15px;
+    }
+
+    textarea {
+        height: 70px;
+    }
+
+    .table-order th:nth-child(2) {
+        display: none;
+    }
+
+    .table-order td:nth-child(2) {
+        display: none;
+    }
+}
 

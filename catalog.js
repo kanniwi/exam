@@ -106,31 +106,39 @@ function displayGoods(newGoods, append = false) {
     addListenersToButtons();
 }
 
-async function loadGoods(page, perPage, sortOrder = "rating_desc") {
+async function loadGoods(page, perPage, sortOrder = "rating_desc", append = false) {
     try {
         const url = `${API_URL}?api_key=${API_KEY}&page=${page}&per_page=${perPage}&sort_order=${sortOrder}`;
+        
         const response = await fetch(url);
 
-        if (!response.ok) throw new Error(`Ошибка загрузки данных: ${response.statusText}`);
+        if (!response.ok) {
+            throw new Error(`Ошибка загрузки данных: ${response.statusText}`);
+        }
 
-        data = await response.json();
+        const data = await response.json();
 
-        goods = goods.concat(data.goods);
+        if (!data.goods || !data._pagination) {
+            throw new Error('Некорректный ответ от сервера. Данные отсутствуют.');
+        }
+
+        goods = append ? goods.concat(data.goods) : data.goods;
+
         totalPages = Math.ceil(data._pagination.total_count / perPage);
-
-        displayGoods(data.goods);
+        displayGoods(data.goods, append);
 
         const loadMoreButton = document.querySelector('.load-more');
         if (page >= totalPages) {
-            loadMoreButton.style.display = 'none';
+            loadMoreButton.style.display = 'none'; 
         } else {
-            loadMoreButton.style.display = 'block';
+            loadMoreButton.style.display = 'block'; 
         }
     } catch (error) {
         console.error('Ошибка загрузки товаров:', error);
         showNotification('Не удалось загрузить данные. Попробуйте позже.', 'error');
     }
 }
+
 
 document.addEventListener('DOMContentLoaded', async () => {
     localStorage.setItem('currentPage', JSON.stringify(1));
