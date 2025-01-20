@@ -8,7 +8,7 @@ function calculateDeliveryCost(deliveryDate, deliveryInterval) {
     const weekendDeliveryCost = 300;
     const eveningDeliveryCost = 200;
 
-    // Получаем день недели (0 - воскресенье, 1 - понедельник, и т.д.)
+    // Получаем день недели (0 - воскресенье, 1 - понедельник)
     const deliveryDay = new Date(deliveryDate).getDay();
     // console.log("Day of the week:", deliveryDay);
 
@@ -387,8 +387,6 @@ function showNotification(message, type) {
     notificationsContainer.appendChild(notification);
 
     setTimeout(() => {
-        if (notification.parentNode) {
-            notification.remove();
-        }
+        notification.remove();
     }, 5000);
 }

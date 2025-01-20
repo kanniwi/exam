@@ -1,5 +1,6 @@
 const API_URL = "https://edu.std-900.ist.mospolytech.ru/exam-2024-1/api/goods";
 const API_KEY = "7630fae5-737b-4cae-b85d-b7d7c246a48b";
+const API_URL_ORDER = "https://edu.std-900.ist.mospolytech.ru/exam-2024-1/api/orders";
 let goods = [];
 let currentPage = 1;
 const perPage = 10;
@@ -17,9 +18,7 @@ function showNotification(message, type) {
     notificationsContainer.appendChild(notification);
 
     setTimeout(() => {
-        if (notification.parentNode) {
-            notification.remove();
-        }
+        notification.remove();
     }, 5000);
 }
 
@@ -32,14 +31,14 @@ async function loadGoods(currentPage, perPage) {
         if (!response.ok) {
             const errorData = await response.json();
             if (errorData.error) {
-                alert(errorData.error);
+                showNotification(errorData.error, 'error');
             }
             throw new Error('Ошибка загрузки данных: ' + response.statusText);
         }
 
         const data = await response.json();
         goods = data.goods;
-        console.log('Массив товаров после загрузки:', goods);
+        // console.log('Массив товаров после загрузки:', goods);
     } catch (error) {
         console.error('Ошибка загрузки товаров:', error);
         showNotification('Не удалось загрузить данные о товарах. Попробуйте позже.', 'error');
@@ -134,7 +133,6 @@ function formatDateToDDMMYYYY(dateString) {
 document.querySelector('.order-grid').addEventListener('submit', async function (event) {
     event.preventDefault(); // Отменяем стандартное поведение отправки формы
 
-    // Собираем данные из формы
     const formData = new FormData(event.target);
     const orderData = {
         full_name: formData.get('full_name'),
@@ -152,9 +150,6 @@ document.querySelector('.order-grid').addEventListener('submit', async function 
     const cartGoods = JSON.parse(localStorage.getItem('cartGoods')) || [];
     orderData.good_ids = cartGoods.map(item => item.id);
 
-    // URL для отправки заказа
-    const API_URL_ORDER = "https://edu.std-900.ist.mospolytech.ru/exam-2024-1/api/orders";
-
     try {
         const response = await fetch(`${API_URL_ORDER}?api_key=${API_KEY}`, {
             method: 'POST',
@@ -166,11 +161,11 @@ document.querySelector('.order-grid').addEventListener('submit', async function 
 
         if (!response.ok) {
             const errorData = await response.json();
-            alert(`Ошибка: ${errorData.error || response.statusText}`);
+            showNotification(`Ошибка: ${errorData.error || response.statusText}`, 'error');
             return;
         }
-
         // Успешное оформление заказа
+        event.target.reset();
         showNotification('Заказ успешно оформлен!', 'success');
         localStorage.removeItem('cartGoods'); // Очищаем корзину
         loadCart(); // Обновляем отображение корзины
@@ -193,13 +188,10 @@ function calculateTotalCost() {
         }
     });
 
-    // Определяем стоимость доставки
     const deliveryCost = calculateDeliveryCost();
 
-    // Итоговая стоимость = товары + доставка
     totalCost += deliveryCost;
 
-    // Отображаем итоговую стоимость на странице
     const totalCostElement = document.querySelector('.total-cost-note');
     totalCostElement.textContent = `Итоговая стоимость заказа: ${totalCost} ₽ (включая доставку: ${deliveryCost} ₽)`;
 }
@@ -212,17 +204,14 @@ function calculateDeliveryCost() {
 
     let additionalCost = 0;
 
-    // Учитываем выходные дни
     if (dayOfWeek === 0 || dayOfWeek === 6) {
         additionalCost += 300;
     }
-    // Учитываем вечерние часы
     else {
         if (deliveryTime === '18:00-22:00') {
         additionalCost += 200;
         }
     }
-
     return baseDeliveryCost + additionalCost;
 }
 
@@ -237,7 +226,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.querySelector('#delivery_date').addEventListener('change', calculateTotalCost);
     document.querySelector('#delivery_interval').addEventListener('change', calculateTotalCost);
 
-    // Переходы по кнопкам
     const basketButton = document.querySelector('.bi-list-ul');
     if (basketButton) {
         basketButton.addEventListener('click', function () {

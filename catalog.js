@@ -12,17 +12,12 @@ function showNotification(message, type) {
     const notification = document.createElement('div');
 
     notification.classList.add('notification');
-
     notification.classList.add(type);
-
     notification.textContent = message;
-
     notificationsContainer.appendChild(notification);
 
     setTimeout(() => {
-        if (notification.parentNode) {
-            notification.remove();
-        }
+        notification.remove();
     }, 5000);
 }
 
@@ -111,7 +106,7 @@ function displayGoods(newGoods, append = false) {
     addListenersToButtons();
 }
 
-async function loadGoods(page, perPage, sortOrder = "rating_desc", append = false) {
+async function loadGoods(page, perPage, sortOrder = "rating_desc") {
     try {
         const url = `${API_URL}?api_key=${API_KEY}&page=${page}&per_page=${perPage}&sort_order=${sortOrder}`;
         const response = await fetch(url);
@@ -119,14 +114,11 @@ async function loadGoods(page, perPage, sortOrder = "rating_desc", append = fals
         if (!response.ok) throw new Error(`Ошибка загрузки данных: ${response.statusText}`);
 
         data = await response.json();
-        if (!data.goods || !data._pagination) {
-            throw new Error('Некорректный ответ от сервера. Данные отсутствуют.');
-        }
 
-        goods = append ? goods.concat(data.goods) : data.goods;
+        goods = goods.concat(data.goods);
         totalPages = Math.ceil(data._pagination.total_count / perPage);
 
-        displayGoods(data.goods, append);
+        displayGoods(data.goods);
 
         const loadMoreButton = document.querySelector('.load-more');
         if (page >= totalPages) {
@@ -148,14 +140,14 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     const basketButton = document.querySelector('.bi-basket');
     if (basketButton) {
-        basketButton.addEventListener('click', function () {
+        basketButton.addEventListener('click',  () => {
             window.location.href = 'basket.html';
         });
     }
 
     const profileButton = document.querySelector('.bi-person-circle');
     if (profileButton) {
-        profileButton.addEventListener('click', function () {
+        profileButton.addEventListener('click', () => {
             window.location.href = 'profile.html';
         });
     }

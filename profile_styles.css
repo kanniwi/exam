@@ -172,7 +172,7 @@ textarea {
     background-color: #77ff97; 
 }
 
-.notification .error {
+.notification.error {
     background-color: #ff949f; 
 }
 
